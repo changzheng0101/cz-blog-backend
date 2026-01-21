@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // 开放认证接口
+                        .requestMatchers("/api/v1/images/**").permitAll() // 开放图像读取接口
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

@@ -9,6 +9,9 @@ public class DataResponse<T> {
     private String msg;
     private T data;
 
+    public DataResponse() {
+    }
+
     public DataResponse(String code, String msg, T data) {
         this.code = code;
         this.msg = msg;

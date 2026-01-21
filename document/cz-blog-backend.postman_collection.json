@@ -90,6 +90,73 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Images",
+      "item": [
+        {
+          "name": "Upload Image",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/images/upload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "images",
+                "upload"
+              ]
+            },
+            "description": "Upload an image with authentication"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Image",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/images/{filename}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "images",
+                "{filename}"
+              ]
+            },
+            "description": "Get an image by filename (no authentication required)"
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "event": [
