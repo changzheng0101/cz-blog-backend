@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weixiao.mapper.ArticleMapper">
+
+    <!-- 插入文章 -->
+    <insert id="insert" parameterType="com.weixiao.entity.Article" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO article (
+            cover, content, title, is_top, status, labels, author_id, category_id, abstract_content, create_time, update_time, read_count
+        ) VALUES (
+            #{cover}, #{content}, #{title}, #{isTop}, #{status}, #{labels}, #{authorId}, #{categoryId}, #{abstractContent}, NOW(), NOW(), 0
+        )
+    </insert>
+
+    <!-- 根据ID查询文章 -->
+    <select id="selectById" parameterType="long" resultType="com.weixiao.entity.Article">
+        SELECT
+            id, cover, content, title, is_top as isTop, status, labels, category_id as categoryId, author_id as authorId,
+            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime
+        FROM article
+        WHERE id = #{id}
+    </select>
+
+    <!-- 查询所有文章列表（按创建时间倒序） -->
+    <select id="selectAll" resultType="com.weixiao.entity.Article">
+        SELECT
+            id, cover, content, title, is_top as isTop, status, labels, category_id as categoryId,
+            abstract_content as abstractContent, create_time as createTime, update_time as updateTime
+        FROM article
+        WHERE status != 'DELETE'
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 更新文章 -->
+    <update id="update" parameterType="com.weixiao.entity.Article">
+        UPDATE article
+        <set>
+            <if test="cover != null">cover = #{cover},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="isTop != null">is_top = #{isTop},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="labels != null">labels = #{labels},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="abstractContent != null">abstract_content = #{abstractContent},</if>
+            update_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除文章（逻辑删除） -->
+    <update id="deleteById" parameterType="long">
+        UPDATE article
+        SET status = 'DELETE', update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据状态查询文章列表 -->
+    <select id="selectByStatus" parameterType="string" resultType="com.weixiao.entity.Article">
+        SELECT 
+            id, cover, content, title, is_top as isTop, status, labels, category_id as categoryId, 
+            abstract_content as abstractContent, create_time as createTime, update_time as updateTime
+        FROM article
+        WHERE status = #{status}
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询置顶文章列表 -->
+    <select id="selectTopArticles" resultType="com.weixiao.entity.Article">
+        SELECT
+            id, cover, content, title, is_top as isTop, status, labels, category_id as categoryId, author_id as authorId,
+            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime
+        FROM article
+        WHERE is_top = 1 AND status = 'PUBLISH'
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询文章列表 -->
+    <select id="selectArticleList" resultType="com.weixiao.entity.Article">
+        SELECT
+            id, cover, title, content, is_top as isTop, status, labels, category_id as categoryId, author_id as authorId,
+            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime
+        FROM article
+        <where>
+            <if test="title != null and title != ''">
+                AND title LIKE concat('%', #{title}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="status == null or status == ''">
+                AND status != 'DELETE'
+            </if>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+        </where>
+        ORDER BY is_top DESC, create_time DESC
+    </select>
+
+    <!-- 根据分类ID查询文章列表 -->
+    <select id="selectByCategoryId" parameterType="long" resultType="com.weixiao.entity.Article">
+        SELECT
+            id, cover, title, is_top as isTop, status, labels, category_id as categoryId, author_id as authorId,
+            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime
+        FROM article
+        WHERE category_id = #{categoryId} AND status != 'DELETE'
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 增加文章阅读量 -->
+    <update id="increaseReadCount" parameterType="long">
+        UPDATE article
+        SET read_count = read_count + 1
+        WHERE id = #{id}
+    </update>
+
+</mapper>

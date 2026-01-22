@@ -40,14 +40,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .toList());
 
         // 4. 返回 UserDetails 对象
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                user.getEnabled(),
-                true, // accountNonExpired
-                true, // credentialsNonExpired
-                true, // accountNonLocked
-                authorities
-        );
+        return new LoginUser(user, authorities);
     }
 }
