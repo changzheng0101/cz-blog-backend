@@ -6,12 +6,14 @@
         <id column="id" property="id" />
         <result column="name" property="name" />
         <result column="description" property="description" />
+        <result column="created_by" property="createdBy" />
+        <result column="updated_by" property="updatedBy" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, name, description, create_time, update_time
+        id, name, description, created_by, updated_by, create_time, update_time
     </sql>
 
     <insert id="insert" parameterType="com.weixiao.entity.Category" useGeneratedKeys="true" keyProperty="id">
@@ -19,10 +21,14 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null">name,</if>
             <if test="description != null">description,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="updatedBy != null">updated_by,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null">#{name},</if>
             <if test="description != null">#{description},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="updatedBy != null">#{updatedBy},</if>
         </trim>
     </insert>
 
@@ -36,6 +42,8 @@
         <set>
             <if test="name != null">name = #{name},</if>
             <if test="description != null">description = #{description},</if>
+            <if test="updatedBy != null">updated_by = #{updatedBy},</if>
+            update_time = NOW()
         </set>
         WHERE id = #{id}
     </update>

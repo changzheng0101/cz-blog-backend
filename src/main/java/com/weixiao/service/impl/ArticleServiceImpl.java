@@ -11,7 +11,6 @@ import com.weixiao.entity.Article;
 import com.weixiao.mapper.ArticleMapper;
 import com.weixiao.service.ArticleService;
 import com.weixiao.vo.ArticleVO;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +35,8 @@ public class ArticleServiceImpl implements ArticleService {
         article.setAuthorId(SecurityUtils.getUserId());
         article.setCreateTime(LocalDateTime.now());
         article.setUpdateTime(LocalDateTime.now());
+        article.setCreatedBy(SecurityUtils.getUserId());
+        article.setUpdatedBy(SecurityUtils.getUserId());
         articleMapper.insert(article);
         return convertToVO(article);
     }
@@ -82,6 +83,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleToUpdate.setStatus(articleDTO.getStatus());
         articleToUpdate.setIsTop(articleDTO.getIsTop());
         articleToUpdate.setCover(articleDTO.getCover());
+        articleToUpdate.setUpdatedBy(SecurityUtils.getUserId());
         // updateTime 在 Mapper 中使用 NOW() 更新，这里不需要设置
 
         articleMapper.update(articleToUpdate);
@@ -140,6 +142,8 @@ public class ArticleServiceImpl implements ArticleService {
         vo.setCover(article.getCover());
         vo.setCreateTime(article.getCreateTime());
         vo.setUpdateTime(article.getUpdateTime());
+        vo.setCreatedBy(article.getCreatedBy());
+        vo.setUpdatedBy(article.getUpdatedBy());
         return vo;
     }
 

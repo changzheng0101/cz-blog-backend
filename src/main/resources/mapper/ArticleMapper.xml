@@ -5,9 +5,9 @@
     <!-- 插入文章 -->
     <insert id="insert" parameterType="com.weixiao.entity.Article" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO article (
-            cover, content, title, is_top, status, labels, author_id, category_id, abstract_content, create_time, update_time, read_count
+            cover, content, title, is_top, status, labels, author_id, category_id, abstract_content, create_time, update_time, read_count, created_by, updated_by
         ) VALUES (
-            #{cover}, #{content}, #{title}, #{isTop}, #{status}, #{labels}, #{authorId}, #{categoryId}, #{abstractContent}, NOW(), NOW(), 0
+            #{cover}, #{content}, #{title}, #{isTop}, #{status}, #{labels}, #{authorId}, #{categoryId}, #{abstractContent}, NOW(), NOW(), 0, #{createdBy}, #{updatedBy}
         )
     </insert>
 
@@ -15,7 +15,8 @@
     <select id="selectById" parameterType="long" resultType="com.weixiao.entity.Article">
         SELECT
             id, cover, content, title, is_top as isTop, status, labels, category_id as categoryId, author_id as authorId,
-            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime
+            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime,
+            created_by as createdBy, updated_by as updatedBy
         FROM article
         WHERE id = #{id}
     </select>
@@ -24,7 +25,8 @@
     <select id="selectAll" resultType="com.weixiao.entity.Article">
         SELECT
             id, cover, content, title, is_top as isTop, status, labels, category_id as categoryId,
-            abstract_content as abstractContent, create_time as createTime, update_time as updateTime
+            abstract_content as abstractContent, create_time as createTime, update_time as updateTime,
+            created_by as createdBy, updated_by as updatedBy
         FROM article
         WHERE status != 'DELETE'
         ORDER BY create_time DESC
@@ -42,6 +44,7 @@
             <if test="labels != null">labels = #{labels},</if>
             <if test="categoryId != null">category_id = #{categoryId},</if>
             <if test="abstractContent != null">abstract_content = #{abstractContent},</if>
+            <if test="updatedBy != null">updated_by = #{updatedBy},</if>
             update_time = NOW()
         </set>
         WHERE id = #{id}
@@ -56,9 +59,10 @@
 
     <!-- 根据状态查询文章列表 -->
     <select id="selectByStatus" parameterType="string" resultType="com.weixiao.entity.Article">
-        SELECT 
-            id, cover, content, title, is_top as isTop, status, labels, category_id as categoryId, 
-            abstract_content as abstractContent, create_time as createTime, update_time as updateTime
+        SELECT
+            id, cover, content, title, is_top as isTop, status, labels, category_id as categoryId,
+            abstract_content as abstractContent, create_time as createTime, update_time as updateTime,
+            created_by as createdBy, updated_by as updatedBy
         FROM article
         WHERE status = #{status}
         ORDER BY create_time DESC
@@ -68,7 +72,8 @@
     <select id="selectTopArticles" resultType="com.weixiao.entity.Article">
         SELECT
             id, cover, content, title, is_top as isTop, status, labels, category_id as categoryId, author_id as authorId,
-            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime
+            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime,
+            created_by as createdBy, updated_by as updatedBy
         FROM article
         WHERE is_top = 1 AND status = 'PUBLISH'
         ORDER BY create_time DESC
@@ -78,7 +83,8 @@
     <select id="selectArticleList" resultType="com.weixiao.entity.Article">
         SELECT
             id, cover, title, content, is_top as isTop, status, labels, category_id as categoryId, author_id as authorId,
-            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime
+            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime,
+            created_by as createdBy, updated_by as updatedBy
         FROM article
         <where>
             <if test="title != null and title != ''">
@@ -101,7 +107,8 @@
     <select id="selectByCategoryId" parameterType="long" resultType="com.weixiao.entity.Article">
         SELECT
             id, cover, title, is_top as isTop, status, labels, category_id as categoryId, author_id as authorId,
-            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime
+            abstract_content as abstractContent, read_count as readCount, create_time as createTime, update_time as updateTime,
+            created_by as createdBy, updated_by as updatedBy
         FROM article
         WHERE category_id = #{categoryId} AND status != 'DELETE'
         ORDER BY create_time DESC

@@ -69,6 +69,16 @@ public class Article {
     private Integer readCount;
     
     /**
+     * 创建人ID
+     */
+    private Long createdBy;
+    
+    /**
+     * 修改人ID
+     */
+    private Long updatedBy;
+    
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;

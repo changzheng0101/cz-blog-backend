@@ -34,4 +34,14 @@ public class CategoryVO {
      * 更新时间
      */
     private LocalDateTime updateTime;
+    
+    /**
+     * 创建者ID
+     */
+    private Long createdBy;
+    
+    /**
+     * 修改者ID
+     */
+    private Long updatedBy;
 }
