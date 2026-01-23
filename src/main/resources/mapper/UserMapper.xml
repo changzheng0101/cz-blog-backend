@@ -6,6 +6,10 @@
         SELECT * FROM sys_user WHERE username = #{username} AND enabled = 1
     </select>
 
+    <select id="findByEmail" resultType="com.weixiao.entity.User">
+        SELECT * FROM sys_user WHERE email = #{email} AND enabled = 1
+    </select>
+
     <select id="findRoleCodesByUserId" resultType="java.lang.String">
         SELECT r.role_code
         FROM sys_role r
@@ -21,5 +25,10 @@
         WHERE ur.user_id = #{userId}
         AND p.permission_code IS NOT NULL
     </select>
+
+    <insert id="insert" parameterType="com.weixiao.entity.User">
+        INSERT INTO sys_user (username, password, nickname, email, phone, enabled, create_time, update_time)
+        VALUES (#{username}, #{password}, #{nickname}, #{email}, #{phone}, #{enabled}, #{createTime}, #{updateTime})
+    </insert>
 
 </mapper>

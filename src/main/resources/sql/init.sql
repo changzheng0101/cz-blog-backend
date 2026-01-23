@@ -140,3 +140,21 @@ CREATE TABLE IF NOT EXISTS `category` (
 INSERT INTO `category` (`name`, `description`, `created_by`, `updated_by`) VALUES ('Java', 'Java编程语言相关文章', 1, 1);
 INSERT INTO `category` (`name`, `description`, `created_by`, `updated_by`) VALUES ('Spring Boot', 'Spring Boot框架相关技术', 1, 1);
 INSERT INTO `category` (`name`, `description`, `created_by`, `updated_by`) VALUES ('Frontend', '前端开发技术', 1, 1);
+
+-- ----------------------------
+-- Table structure for verification_code
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `verification_code` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `email` varchar(100) NOT NULL COMMENT '邮箱地址',
+  `code` varchar(10) NOT NULL COMMENT '验证码',
+  `type` varchar(20) NOT NULL COMMENT '验证码类型 (REGISTER, LOGIN, RESET_PASSWORD)',
+  `expire_time` datetime NOT NULL COMMENT '过期时间',
+  `is_used` tinyint(1) DEFAULT '0' COMMENT '是否已使用 1:是 0:否',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_email` (`email`),
+  KEY `idx_expire_time` (`expire_time`),
+  KEY `idx_is_used` (`is_used`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='验证码表';

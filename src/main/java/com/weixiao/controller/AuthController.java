@@ -2,13 +2,15 @@ package com.weixiao.controller;
 
 import com.weixiao.common.result.DataResponse;
 import com.weixiao.common.utils.JwtUtils;
+import com.weixiao.dto.SendVerificationCodeDTO;
 import com.weixiao.dto.UserLoginDTO;
+import com.weixiao.dto.UserRegisterDTO;
 import com.weixiao.entity.User;
 import com.weixiao.mapper.UserMapper;
 import com.weixiao.service.AuthService;
 import com.weixiao.vo.UserRolesPermissionsVO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -31,6 +33,18 @@ public class AuthController {
     public DataResponse<String> login(@RequestBody UserLoginDTO loginDTO) {
         String token = authService.login(loginDTO);
         return DataResponse.success(token);
+    }
+
+    @PostMapping("/register")
+    public DataResponse<String> register(@Valid @RequestBody UserRegisterDTO registerDTO) {
+        String result = authService.register(registerDTO);
+        return DataResponse.success(result);
+    }
+
+    @PostMapping("/send-verification-code")
+    public DataResponse<Void> sendVerificationCode(@Valid @RequestBody SendVerificationCodeDTO sendDTO) {
+        authService.sendVerificationCode(sendDTO);
+        return DataResponse.success(null);
     }
 
     @GetMapping("/roles-permissions")

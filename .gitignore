@@ -3,3 +3,5 @@ target
 .joycode
 .vscode
 uploads
+
+secrets.properties
