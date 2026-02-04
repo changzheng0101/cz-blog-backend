@@ -5,3 +5,4 @@ target
 uploads
 
 secrets.properties
+secrets-prod.properties
