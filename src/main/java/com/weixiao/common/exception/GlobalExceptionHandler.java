@@ -2,6 +2,7 @@ package com.weixiao.common.exception;
 
 import com.weixiao.common.result.DataResponse;
 import com.weixiao.common.result.DataResponseCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +16,7 @@ import java.util.Map;
  * 全局异常处理器
  */
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     /**
@@ -28,41 +30,23 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        
+
         DataResponse<Map<String, String>> response = new DataResponse<>();
         response.setCode(DataResponseCode.PARAM_ERROR.getCode());
         response.setMsg("参数校验失败");
         response.setData(errors);
-        
+
         return response;
     }
 
-    /**
-     * 处理绑定异常
-     */
-    @ExceptionHandler(BindException.class)
-    public DataResponse<Map<String, String>> handleBindException(BindException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        
-        DataResponse<Map<String, String>> response = new DataResponse<>();
-        response.setCode(DataResponseCode.PARAM_ERROR.getCode());
-        response.setMsg("参数绑定失败");
-        response.setData(errors);
-        
-        return response;
-    }
 
     /**
      * 处理业务异常
      */
     @ExceptionHandler(GlobalException.class)
     public DataResponse<Void> handleGlobalException(GlobalException ex) {
-        return DataResponse.<Void>error(ex.getMessage());
+        log.error("业务异常", ex);
+        return DataResponse.error(ex.getMessage());
     }
 
     /**
@@ -70,6 +54,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public DataResponse<Void> handleException(Exception ex) {
-        return DataResponse.<Void>error("系统内部错误: " + ex.getMessage());
+        log.error("全局异常处理器拦截", ex);
+        return DataResponse.error("系统内部错误: " + ex.getMessage());
     }
 }
