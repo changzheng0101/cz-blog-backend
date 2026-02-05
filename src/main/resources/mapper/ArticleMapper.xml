@@ -29,7 +29,7 @@
             created_by as createdBy, updated_by as updatedBy
         FROM article
         WHERE status != 'DELETE'
-        ORDER BY create_time DESC
+        ORDER BY create_time DESC,id ASC
     </select>
 
     <!-- 更新文章 -->
