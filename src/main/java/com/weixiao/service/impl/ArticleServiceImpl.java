@@ -9,6 +9,7 @@ import com.weixiao.common.utils.SecurityUtils;
 import com.weixiao.dto.ArticleDTO;
 import com.weixiao.entity.Article;
 import com.weixiao.mapper.ArticleMapper;
+import com.weixiao.mapper.CategoryMapper;
 import com.weixiao.service.ArticleService;
 import com.weixiao.vo.ArticleVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private ArticleMapper articleMapper;
+    @Autowired
+    private CategoryMapper categoryMapper;
 
     @Override
     @Transactional
@@ -136,6 +139,7 @@ public class ArticleServiceImpl implements ArticleService {
         vo.setContent(article.getContent());
         vo.setAbstractContent(article.getAbstractContent());
         vo.setCategoryId(article.getCategoryId());
+        vo.setCategoryName(categoryMapper.selectById(article.getCategoryId()).getName());
         vo.setLabels(article.getLabels());
         vo.setStatus(article.getStatus());
         vo.setIsTop(article.getIsTop());

@@ -1,0 +1,42 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+
+name: deploy backend
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+            distribution: 'temurin'
+            java-version: '17'
+
+      - name: Build JAR with Maven
+        run: mvn clean package
+
+      - name: Upload JAR to Server
+        uses: c0c1/scp-action@v1.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          user: ${{ secrets.SERVER_USERNAME }}
+          pass: ${{ secrets.SERVER_PASSWORD }}
+          src: target/cz-blog-backend-1.0-SNAPSHOT.jar
+          remote: /home/weixiao/cz-blog/backend-cz-blog/cz-blog-backend-1.0-SNAPSHOT.jar
+
+      - name: run backend service
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}  # 这里直接传密码
+          port: 22
+          script: bash /home/weixiao/cz-blog/backend-cz-blog/start.sh
