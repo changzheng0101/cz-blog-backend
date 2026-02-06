@@ -35,6 +35,7 @@ jobs:
           target: "/home/weixiao/cz-blog/backend-cz-blog/"
           # 不指定这个会导致创建  /home/weixiao/cz-blog/backend-cz-blog/target/cz-blog-backend-1.0-SNAPSHOT.jar
           strip_components: 1
+          overwrite: true
 
       - name: run backend service
         uses: appleboy/ssh-action@v1.0.3
