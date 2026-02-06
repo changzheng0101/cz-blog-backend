@@ -1,10 +1,15 @@
 package com.weixiao.controller;
 
+import com.weixiao.common.exception.GlobalException;
 import com.weixiao.common.result.DataResponse;
+import com.weixiao.common.result.DataResponseCode;
 import com.weixiao.common.result.PageBean;
 import com.weixiao.dto.ArticleDTO;
+import com.weixiao.dto.CategoryDTO;
 import com.weixiao.service.ArticleService;
+import com.weixiao.service.CategoryService;
 import com.weixiao.vo.ArticleVO;
+import com.weixiao.vo.CategoryVO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,16 +30,55 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
 
+    @Autowired
+    private CategoryService categoryService;
+
     /**
      * 创建文章
+     * 分类以 categoryId 为准；若仅传 categoryName 则按名称查找并转为 id，不存在则创建分类；
+     * 若同时传入 categoryId 与 categoryName，则校验二者是否匹配，不匹配则抛异常。
      *
-     * @param articleDTO 文章信息
+     * @param articleDTO 文章信息（可含 categoryId 和/或 categoryName）
      * @return 创建的文章信息
      */
     @PostMapping
     public DataResponse<ArticleVO> createArticle(@RequestBody @Valid ArticleDTO articleDTO) {
+        resolveCategoryId(articleDTO);
         ArticleVO articleVO = articleService.createArticle(articleDTO);
         return DataResponse.success(articleVO);
+    }
+
+    /**
+     * 根据 categoryId、categoryName 解析并设置 articleDTO 的 categoryId。
+     * 以 categoryId 为准；仅 categoryName 时按名称查找或创建；二者都有时校验匹配。
+     */
+    private void resolveCategoryId(ArticleDTO articleDTO) {
+        Long categoryId = articleDTO.getCategoryId();
+        String categoryName = articleDTO.getCategoryName();
+        boolean hasId = categoryId != null;
+        boolean hasName = categoryName != null && !categoryName.isBlank();
+
+        if (hasId && hasName) {
+            CategoryVO category = categoryService.getCategoryById(categoryId);
+            if (!categoryName.trim().equals(category.getName())) {
+                throw new GlobalException(DataResponseCode.PARAM_ERROR, "分类ID与分类名称不匹配");
+            }
+            return;
+        }
+        if (hasId) {
+            return;
+        }
+        if (hasName) {
+            CategoryVO byName = categoryService.getCategoryByName(categoryName.trim());
+            if (byName != null) {
+                articleDTO.setCategoryId(byName.getId());
+            } else {
+                CategoryDTO dto = new CategoryDTO();
+                dto.setName(categoryName.trim());
+                CategoryVO created = categoryService.createCategory(dto);
+                articleDTO.setCategoryId(created.getId());
+            }
+        }
     }
 
     /**
@@ -93,21 +137,6 @@ public class ArticleController {
     public DataResponse<Boolean> deleteArticle(@PathVariable Long id) {
         boolean result = articleService.deleteArticle(id);
         return DataResponse.success(result);
-    }
-
-    /**
-     * 获取已发布的文章列表（此接口可能不再需要，可直接用分页接口 status=PUBLISH）
-     * 但为了兼容性，可以保留或标记为废弃
-     *
-     * @return 已发布的文章列表
-     */
-    @GetMapping("/published")
-    public DataResponse<List<ArticleVO>> getPublishedArticles() {
-        // 复用 getArticleList 接口逻辑，这里简单起见，可以暂时不改动 Service 的 getArticlesByStatus 实现，
-        // 或者在 Service 中删除旧方法并在 Controller 层重定向。
-        // 由于 Service 接口已删除 getArticlesByStatus，这里需要调整调用
-        PageBean<ArticleVO> pageBean = articleService.getArticleList(1, 100, null, "PUBLISH", null);
-        return DataResponse.success(pageBean.getData());
     }
 
     /**

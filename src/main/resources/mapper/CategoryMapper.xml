@@ -62,4 +62,12 @@
         ORDER BY create_time DESC
     </select>
 
+    <select id="selectByName" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM category
+        WHERE name = #{name}
+        LIMIT 1
+    </select>
+
 </mapper>

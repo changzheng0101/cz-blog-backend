@@ -47,4 +47,12 @@ public interface CategoryService {
      * @return 分类VO列表
      */
     List<CategoryVO> getAllCategories();
+
+    /**
+     * 根据名称查询分类
+     *
+     * @param name 分类名称
+     * @return 分类VO，不存在则返回 null
+     */
+    CategoryVO getCategoryByName(String name);
 }

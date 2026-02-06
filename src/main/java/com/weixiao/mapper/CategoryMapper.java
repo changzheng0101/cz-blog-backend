@@ -49,4 +49,12 @@ public interface CategoryMapper {
      * @return 分类列表
      */
     List<Category> selectAll();
+
+    /**
+     * 根据名称查询分类
+     *
+     * @param name 分类名称
+     * @return 分类对象，不存在则返回 null
+     */
+    Category selectByName(String name);
 }

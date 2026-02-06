@@ -52,6 +52,11 @@ public class ArticleDTO {
      * 分类ID
      */
     private Long categoryId;
+
+    /**
+     * 分类名称
+     */
+    private String categoryName;
     
     /**
      * 摘要内容

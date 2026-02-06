@@ -81,4 +81,18 @@ public class CategoryServiceImpl implements CategoryService {
             return categoryVO;
         }).collect(Collectors.toList());
     }
+
+    @Override
+    public CategoryVO getCategoryByName(String name) {
+        if (name == null || name.isBlank()) {
+            return null;
+        }
+        Category category = categoryMapper.selectByName(name.trim());
+        if (category == null) {
+            return null;
+        }
+        CategoryVO categoryVO = new CategoryVO();
+        BeanUtils.copyProperties(category, categoryVO);
+        return categoryVO;
+    }
 }
