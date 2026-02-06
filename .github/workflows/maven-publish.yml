@@ -17,8 +17,16 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-            distribution: 'temurin'
-            java-version: '17'
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Debug Secret Check
+        run: |
+          if [ -z "${{ secrets.SERVER_PASSWORD }}" ]; then
+            echo "ERROR: SERVER_PASSWORD is empty!"
+            exit 1
+          else
+            echo "SERVER_PASSWORD is set."
+          fi
 
       - name: Build JAR with Maven
         run: mvn clean package
@@ -28,7 +36,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }} # 这里是关键词 password，不是 pass
+          password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
           source: "target/cz-blog-backend-1.0-SNAPSHOT.jar"
           target: "/home/weixiao/cz-blog/backend-cz-blog/"
@@ -40,6 +48,6 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}  # 这里直接传密码
+          password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
           script: bash /home/weixiao/cz-blog/backend-cz-blog/start.sh
