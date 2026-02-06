@@ -10,6 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: RemoteAuth
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -19,14 +20,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Debug Secret Check
-        run: |
-          if [ -z "${{ secrets.SERVER_PASSWORD }}" ]; then
-            echo "ERROR: SERVER_PASSWORD is empty!"
-            exit 1
-          else
-            echo "SERVER_PASSWORD is set."
-          fi
 
       - name: Build JAR with Maven
         run: mvn clean package
